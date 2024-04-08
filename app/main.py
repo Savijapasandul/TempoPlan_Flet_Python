@@ -1,8 +1,10 @@
-import flet as ft
+import flet 
+from flet import *
+import time 
+from math import pi
 
+def main(page: Page):
+    pass
 
-def main(page: ft.Page):
-    page.add(ft.SafeArea(ft.Text("Hello, Flet!")))
-
-
-ft.app(main)
+if __name__ == "__main__":
+    flet.app(target=main)

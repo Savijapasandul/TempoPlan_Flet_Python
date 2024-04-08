@@ -1,7 +1,14 @@
 import flet
 from flet import *
 from math import pi
+# supabase project name = " TempoPlan_Flet_Python ", pass = " y2VXdgz4raDPCcio "
+from supabase import create_client
 import time
+
+supabase_url = "https://zbccvhlvmgsophucuaie.supabase.co"
+supabase_key = "your_project_key"
+
+supabase = create_client(supabase_url, supabase_key)
 
 
 class AnimatedBox(UserControl):
@@ -207,53 +214,37 @@ class UserInputField(UserControl):
         )
 
 
+def login(email, password):
+    # Query Supabase database for user with provided email
+    result = supabase.table('users').select('*').eq('email', email).execute()
+    
+    if result['status_code'] == 200 and len(result['data']) > 0:
+        user = result['data'][0]
+        # Check if password matches
+        if user['password'] == password:
+            return True, user
+        else:
+            return False, None
+    else:
+        return False, None
+
+
 def main(page: Page):
     page.horizontal_alignment = "center"
     page.vertical_alignment = "center"
     page.padding = padding.only(right=50)
     page.bgcolor = "#212328"
 
-    def animate_boxes():
-        clock_wise_rotate = pi / 4
-        counter_clock_wise_rotate = -pi * 2
-        red_box = page.controls[0].content.content.controls[1].controls[0].controls[0]
-        blue_box = page.controls[0].content.content.controls[1].controls[1].controls[0]
-        counter = 0
-        while True:
-            if counter >= 0 and counter <= 4:
-                red_box.rotate = transform.Rotate(
-                    counter_clock_wise_rotate, alignment.center
-                )
-                blue_box.rotate = transform.Rotate(clock_wise_rotate, alignment.center)
+    def handle_sign_in_click():
+        email = page.controls[0].content.content.controls[3].controls[3].controls[1].value
+        password = page.controls[0].content.content.controls[5].controls[3].controls[1].value
 
-                red_box.update()
-                blue_box.update()
-
-                clock_wise_rotate += pi / 2
-                counter_clock_wise_rotate -= pi / 2
-
-                counter += 1
-
-                time.sleep(0.70)
-
-            if counter >= 5 and counter <= 10:
-                clock_wise_rotate -= pi / 2
-                counter_clock_wise_rotate += pi / 2
-
-                red_box.rotate = transform.Rotate(
-                    counter_clock_wise_rotate, alignment.center
-                )
-                blue_box.rotate = transform.Rotate(clock_wise_rotate, alignment.center)
-
-                red_box.update()
-                blue_box.update()
-
-                counter += 1
-
-                time.sleep(0.70)
-
-            if counter > 10:
-                counter = 0
+        success, user = login(email, password)
+        if success:
+            print("Login successful!")
+            # Proceed with your application logic after successful login
+        else:
+            print("Invalid email or password. Please try again.")
 
     page.add(
         Card(
@@ -309,12 +300,13 @@ def main(page: Page):
                             alignment=MainAxisAlignment.END,
                             controls=[
                                 Container(
-                                    content=Text("Forgot Passowrd?", size=9),
+                                    content=Text("Forgot Password?", size=9),
                                 )
                             ],
                         ),
                         Divider(height=45, color="transparent"),
-                        SignInButton("Sign In"),
+                        # Sign In button with login functionality
+                        SignInButton("Sign In", on_click=handle_sign_in_click),
                         Divider(height=35, color="transparent"),
                         Text(
                             "Sign in form using Python and Flet",
@@ -327,7 +319,6 @@ def main(page: Page):
         )
     )
     page.update()
-    animate_boxes()
 
 
 if __name__ == "__main__":

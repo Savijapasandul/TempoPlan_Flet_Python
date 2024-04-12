@@ -1,4 +1,4 @@
-# A app Flet app
+# A mapp Flet app
 
 An example of a minimal Flet app.
 

@@ -5,4 +5,4 @@ def main(page: ft.Page):
     page.controls.append(t)
     page.update()
 
-ft.app(target=main)¬
+ft.app(target=main)

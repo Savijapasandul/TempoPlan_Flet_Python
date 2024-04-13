@@ -36,20 +36,16 @@ def main(page):
         ],
     )
 
-    page.navigation_bar = ft.NavigationBar(
-        destinations=[
-            ft.NavigationDestination(icon=ft.icons.CALENDAR_MONTH, label="Calendar"),
-            ft.NavigationDestination(icon=ft.icons.HOME, label="Home"),
-            ft.NavigationDestination(icon=ft.icons.SETTINGS, label="Settings"),
-        ],
-        on_change=[
-            lambda e: page.go("/calendar"),
-            lambda e: page.go("/"),
-            lambda e: page.go("/settings"),
-        ],
-        border=ft.Border(
-            top=ft.BorderSide(color=ft.cupertino_colors.SYSTEM_GREY2, width=0)
-        ),
+    page.bottom_appbar = ft.BottomAppBar(
+        bgcolor=ft.colors.GREY,
+        shape=ft.NotchShape.CIRCULAR,
+        content=ft.Row(
+            controls=[
+            ft.IconButton(icon=ft.icons.CALENDAR_MONTH, on_click=lambda _: page.go("/calendar")),
+            ft.IconButton(icon=ft.icons.HOME, on_click=lambda _: page.go("/")),
+            ft.IconButton(icon=ft.icons.SETTINGS, on_click=lambda _: page.go("/settings")),
+            ],
+        )
     )
 
     def route_change(e: ft.RouteChangeEvent):

@@ -31,22 +31,6 @@ def main(page):
         e.control.selected = not e.control.selected
         e.control.update()
 
-    # bottom bar
-    bottom_app_bar = ft.BottomAppBar(
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        shape=ft.NotchShape.CIRCULAR,
-        content=ft.Row(
-            spacing=50,
-            width=page.window_width,
-            alignment=ft.MainAxisAlignment.SPACE_AROUND,
-            controls=[
-                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar")),
-                ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/")),
-                ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings")),
-            ],
-        )
-    )
-
     # route handler
     def route_change(route):
     
@@ -69,7 +53,49 @@ def main(page):
                             )
                         ],
                     ),
-                    bottom_app_bar
+
+                    ft.BottomAppBar(
+                        bgcolor=ft.colors.SURFACE_VARIANT,
+                        shape=ft.NotchShape.CIRCULAR,
+                        content=ft.Row(
+                            spacing=50,
+                            width=page.window_width,
+                            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            controls=[
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar"), ),
+                                ft.IconButton(icon=ft.icons.HOME, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/")),
+                                ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings")),
+                            ],
+                        )
+                    ),
+
+                    ft.Tabs(
+                        selected_index=1,
+                        animation_duration=300,
+                        expand=2,
+                        tabs=[
+                            ft.Tab(
+                                tab_content=ft.Icon(ft.icons.SEARCH),
+                                content=ft.Container(
+                                    content=ft.Text("This is Tab 1"), alignment=ft.alignment.center
+                                ),
+                            ),
+                            ft.Tab(
+                                text="Booked",
+                                icon=ft.icons.MEETING_ROOM,
+                                content=ft.Container(
+                                    content=ft.Text("This is Tab 2"), alignment=ft.alignment.center
+                                ),
+                            ),
+                            ft.Tab(
+                                text="Available",
+                                icon=ft.icons.EVENT_AVAILABLE,
+                                content=ft.Container(
+                                    content=ft.Text("This is Tab 3"), alignment=ft.alignment.center
+                                ),
+                            ),
+                        ],
+                    )
                 ],
             )
         )
@@ -80,7 +106,20 @@ def main(page):
                     "/calendar",
                     [
                         ft.AppBar(title=ft.Text("Calendar"), bgcolor=ft.colors.SURFACE_VARIANT),
-                        bottom_app_bar
+                        ft.BottomAppBar(
+                            bgcolor=ft.colors.SURFACE_VARIANT,
+                            shape=ft.NotchShape.CIRCULAR,
+                            content=ft.Row(
+                                spacing=50,
+                                width=page.window_width,
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                controls=[
+                                    ft.IconButton(icon=ft.icons.CALENDAR_MONTH, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar")),
+                                    ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/")),
+                                    ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings")),
+                                ],
+                            )
+                        ),
                     ],
                 )
             )
@@ -103,7 +142,20 @@ def main(page):
                                 ),
                             ],
                         ),
-                        bottom_app_bar
+                        ft.BottomAppBar(
+                            bgcolor=ft.colors.SURFACE_VARIANT,
+                            shape=ft.NotchShape.CIRCULAR,
+                            content=ft.Row(
+                                spacing=50,
+                                width=page.window_width,
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                controls=[
+                                    ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar")),
+                                    ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/")),
+                                    ft.IconButton(icon=ft.icons.SETTINGS, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings")),
+                                ],
+                            )
+                        ),
                     ],
                 )
             )

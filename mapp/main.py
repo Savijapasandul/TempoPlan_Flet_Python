@@ -43,22 +43,7 @@ def main(page):
     )
 
     page.add(
-        ft.SafeArea(
-            ft.Column(
-                [
-                    ft.Checkbox(value=False, label="Dark Mode"),
-                    ft.Text("First field:"),
-                    ft.TextField(keyboard_type=ft.KeyboardType.TEXT),
-                    ft.Text("Second field:"),
-                    ft.TextField(keyboard_type=ft.KeyboardType.TEXT),
-                    ft.Switch(label="A switch"),
-                    ft.FilledButton(content=ft.Text("Adaptive button")),
-                    ft.Text("Text line 1"),
-                    ft.Text("Text line 2"),
-                    ft.Text("Text line 3"),
-                ]
-            )
-        )
+        ft.SafeArea( ft.Text("Hello"))
     )
 
 

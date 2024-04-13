@@ -20,7 +20,8 @@ def main(page):
             page.update()
         e.control.selected = not e.control.selected
         e.control.update()
-    
+
+    # notifications    
     def toggle_notification_button(e):
         if e.control.selected:
             page.update()

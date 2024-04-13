@@ -38,8 +38,8 @@ def main(page):
                 ft.Container(
                     content=ft.Text(value=f"Room {room['number']}"),
                     alignment=ft.alignment.center,
-                    width=150,
-                    height=150,
+                    width=350,
+                    height=350,
                     bgcolor=ft.colors.SURFACE_VARIANT,
                     border_radius=ft.border_radius.all(5),
                 )
@@ -53,51 +53,38 @@ def main(page):
                 ft.Container(
                     content=ft.Text(value=f"Room {room['number']}"),
                     alignment=ft.alignment.center,
-                    width=150,
-                    height=150,
+                    width=350,
+                    height=350,
                     bgcolor=ft.colors.SURFACE_VARIANT,
                     border_radius=ft.border_radius.all(5),
                 )
             )
         return items
 
-
-    def close_anchor(e):
-        text = f"Color {e.control.data}"
-        print(f"closing view from {text}")
-        anchor.close_view(text)
-
-    def handle_change(e):
-        print(f"handle_change e.data: {e.data}")
-
-    def handle_submit(e):
-        print(f"handle_submit e.data: {e.data}")
-
-    def handle_tap(e):
-        print(f"handle_tap")
-
-    anchor = ft.SearchBar(
-        view_elevation=4,
-        divider_color=ft.colors.AMBER,
-        bar_hint_text="Search colors...",
-        view_hint_text="Choose a color from the suggestions...",
-        on_change=handle_change,
-        on_submit=handle_submit,
-        on_tap=handle_tap,
-        controls=[
-            ft.ListTile(title=ft.Text(f"Color {i}"), on_click=close_anchor, data=i)
-            for i in range(10)
-        ],
-    )
-
     # Sample room details
     booked_rooms = [
-        {"number": 101, "status": "Booked", "guest": "John Doe"},
+        {"number": 101, "status": "Booked", "guest": "Jane Smith"},
         {"number": 102, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 103, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 104, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 105, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 106, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 107, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 108, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 109, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 110, "status": "Booked", "guest": "Jane Smith"},
+        {"number": 111, "status": "Booked", "guest": "Jane Smith"},
     ]
     available_rooms = [
         {"number": 201, "status": "Available"},
         {"number": 202, "status": "Available"},
+        {"number": 203, "status": "Available"},
+        {"number": 204, "status": "Available"},
+        {"number": 205, "status": "Available"},
+        {"number": 206, "status": "Available"},
+        {"number": 207, "status": "Available"},
+        {"number": 208, "status": "Available"},
+        {"number": 209, "status": "Available"},
     ]
 
     booked_tab_items = booked_tab(booked_rooms)
@@ -154,11 +141,6 @@ def main(page):
                                     content=ft.Row(
                                         width=page.window_width,
                                         alignment=ft.MainAxisAlignment.CENTER,
-                                        controls=[
-                                            anchor,
-                                            ft.OutlinedButton("Open Search View", on_click=lambda _: anchor.open_view(),),
-                                            
-                                        ],
                                     )  
                                 )
                             ),

@@ -20,6 +20,14 @@ def main(page):
             page.update()
         e.control.selected = not e.control.selected
         e.control.update()
+    
+    def toggle_notification_button(e):
+        if e.control.selected:
+            page.update()
+        else:
+            page.update()
+        e.control.selected = not e.control.selected
+        e.control.update()
 
     # bottom bar
     bottom_app_bar = ft.BottomAppBar(
@@ -52,7 +60,7 @@ def main(page):
                                 selected_icon=ft.icons.NOTIFICATIONS_ACTIVE_ROUNDED,
                                 style=ft.ButtonStyle(padding=0),
                                 selected=False,
-                                #on_click=toggle_theme_button,
+                                on_click=toggle_notification_button,
                             )
                         ],
                     ),

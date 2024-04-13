@@ -5,6 +5,7 @@ import flet as ft
 def main(page):
 
     # page settings
+    page.title = "TempoRoomPlan"
     page.adaptive = True
     page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -35,6 +36,9 @@ def main(page):
         bgcolor=ft.colors.SURFACE_VARIANT,
         shape=ft.NotchShape.CIRCULAR,
         content=ft.Row(
+            spacing=50,
+            width=page.window_width,
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
             controls=[
                 ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar")),
                 ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/")),

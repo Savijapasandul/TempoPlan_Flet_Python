@@ -1,4 +1,3 @@
-# modules
 import flet as ft
 
 def main(page):
@@ -26,25 +25,39 @@ def main(page):
                 style=ft.ButtonStyle(padding=0),
                 selected=False,
                 on_click=toggle_theme_button,
+            ),
+            ft.IconButton(
+                icon=ft.icons.NOTIFICATIONS, 
+                selected_icon=ft.icons.NOTIFICATIONS_ACTIVE_ROUNDED,
+                style=ft.ButtonStyle(padding=0),
+                selected=False,
+                #on_click=toggle_theme_button,
             )
         ],
     )
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[
-            ft.NavigationDestination(icon=ft.icons.NOTIFICATIONS, selected_icon=ft.icons.NOTIFICATIONS_ACTIVE_ROUNDED, label="Notification"),
+            ft.NavigationDestination(icon=ft.icons.CALENDAR_MONTH, label="Calendar"),
             ft.NavigationDestination(icon=ft.icons.HOME, label="Home"),
-            ft.NavigationDestination(icon=ft.icons.SETTINGS, label="Settings",
-            ),
+            ft.NavigationDestination(icon=ft.icons.SETTINGS, label="Settings"),
+        ],
+        on_change=[
+            lambda e: page.go("/calendar"),
+            lambda e: page.go("/"),
+            lambda e: page.go("/settings"),
         ],
         border=ft.Border(
             top=ft.BorderSide(color=ft.cupertino_colors.SYSTEM_GREY2, width=0)
         ),
     )
 
-    page.add(
-        ft.SafeArea( ft.Text("Hello"))
-    )
+    def route_change(e: ft.RouteChangeEvent):
+        page.add(ft.Text(f"New route: {e.route}"))
 
+    page.on_route_change = route_change
+    page.add(ft.Text(f"Initial route: {page.route}"))
+
+    page.add(ft.SafeArea(ft.Text("Hello")))
 
 ft.app(target=main)

@@ -22,6 +22,9 @@ def main(page):
         e.control.selected = not e.control.selected
         e.control.update()
 
+    def handle_search_change(e):
+        print("on_change data : " + str(e.data))
+
     # route handler
     def route_change(route):
     
@@ -30,7 +33,7 @@ def main(page):
             ft.View(
                 # home page
                 "/",
-                [
+                controls=[
                     ft.AppBar(
                         title=ft.Text("Home"), 
                         bgcolor=ft.colors.SURFACE_VARIANT,
@@ -62,47 +65,62 @@ def main(page):
                     ),
 
                     ft.Tabs(
-                        selected_index=1,
+                        selected_index=0,
                         animation_duration=300,
                         expand=1,
                         tabs=[
                             ft.Tab(
                                 text="Active",
                                 content=ft.Container(
-                                    margin=5,
-                                    content=ft.Row(
+                                    margin=10,
+                                    content=ft.Column(
+                                        wrap=True,
+                                        expand=True,
                                         width=page.window_width,
                                         alignment=ft.MainAxisAlignment.CENTER,
+                                        controls=[
+                                            ft.Text("No bookings yet"),
+                                            ft.Text("Sign in or create an account to get started."),
+                                            ft.TextButton(text="Log in"),
+                                        ]
                                     )  
                                 )
                             ),
                             ft.Tab(
                                 text="Past",
                                 content=ft.Container(
-                                    margin=5,
-                                    content=ft.Row(
+                                    margin=10,
+                                    content=ft.Column(
                                         wrap=True,
                                         expand=True,
-                                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                        alignment=ft.MainAxisAlignment.CENTER,
                                         spacing=10,
                                         width=page.window_width,
-                                        #controls=active_home_tab,
                                         scroll=ft.ScrollMode.AUTO,
+                                        controls=[
+                                            ft.Text("No pass bookings"),
+                                            ft.Text("Sign in or create an account to get started."),
+                                            ft.TextButton(text="Log in"),
+                                        ]
                                     )
                                 ),
                             ),
                             ft.Tab(
                                 text="Cancelled",
                                 content=ft.Container(
-                                    margin=5,
-                                    content=ft.Row(
+                                    margin=10,
+                                    content=ft.Column(
                                         wrap=True,
                                         expand=True,
-                                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                        alignment=ft.MainAxisAlignment.CENTER,
                                         spacing=10,
                                         width=page.window_width,
-                                        #controls=available_tab_items,
                                         scroll=ft.ScrollMode.AUTO,
+                                        controls=[
+                                            ft.Text("No cancelled bookings"),
+                                            ft.Text("Sign in or create an account to get started."),
+                                            ft.TextButton(text="Log in"),
+                                        ]
                                     )
                                 ),
                             ),
@@ -116,7 +134,7 @@ def main(page):
                 ft.View(
                     # calendar page
                     "/search",
-                    [
+                    controls=[
                         ft.AppBar(title=ft.Text("Search"), bgcolor=ft.colors.SURFACE_VARIANT),
                         ft.BottomAppBar(
                             bgcolor=ft.colors.SURFACE_VARIANT,
@@ -132,6 +150,14 @@ def main(page):
                                 ],
                             )
                         ),
+
+                        ft.TextField(
+                            hint_text="Search...", 
+                            on_submit=lambda _: page.go("/available_rooms"), 
+                        ),
+
+                        ft.TextButton("Search", on_click=lambda _: page.go("/available_rooms")),
+
                     ],
                 )
             )
@@ -140,8 +166,37 @@ def main(page):
                 ft.View(
                     # notifications page
                     "/notifications",
-                    [
+                    controls=[
                         ft.AppBar(title=ft.Text("Notifications"), bgcolor=ft.colors.SURFACE_VARIANT),
+
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text("You don't have any notifications"),
+                                    ft.Text("Notifications let you quickly take actions on upcoming or current bookings.") 
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
+
+        if page.route == "/available_rooms":
+            page.views.append(
+                ft.View(
+                    # available_rooms page
+                    "/available_rooms",
+                    controls=[
+                        ft.AppBar(title=ft.Text("Available rooms"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text("No rooms available to book."),
+                                ]
+                            )
+                        ),
                     ],
                 )
             )
@@ -151,7 +206,7 @@ def main(page):
                 ft.View(
                     # setting page
                     "/settings",
-                    [
+                    controls=[
                         ft.AppBar(
                             title=ft.Text("Settings"), 
                             bgcolor=ft.colors.SURFACE_VARIANT,
@@ -179,6 +234,49 @@ def main(page):
                                     ft.IconButton(icon=ft.icons.SETTINGS, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
                                 ],
                             )
+                        ),
+
+                        ft.Container(
+                            content=ft.Column(
+                                width=500,
+                                scroll=ft.ScrollMode.AUTO,
+                                controls=[
+                                    ft.Text("Not logged in!"),
+                                    ft.TextButton("Log in"),
+                                    ft.TextButton("Log out"),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        trailing=ft.PopupMenuButton(
+                                            icon=ft.icons.MORE_VERT,
+                                            items=[
+                                                ft.PopupMenuItem(text="Item 1"),
+                                                ft.PopupMenuItem(text="Item 2"),
+                                            ]
+                                        ),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.SETTINGS),
+                                        title=ft.Text("No implemented setting yet")
+                                    ),
+                                ]
+                            ),
                         ),
                     ],
                 )

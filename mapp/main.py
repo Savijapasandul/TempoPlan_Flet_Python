@@ -7,88 +7,20 @@ def main(page):
     # page settings
     page.title = "RoomReservePro"
     page.adaptive = True
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.DARK
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.CrossAxisAlignment.CENTER
     
     # light theme / dark theme
     def toggle_theme_button(e):
         if e.control.selected:
-            page.theme_mode = ft.ThemeMode.LIGHT
-            page.update()
-        else:
             page.theme_mode = ft.ThemeMode.DARK
             page.update()
-        e.control.selected = not e.control.selected
-        e.control.update()
-
-    # notifications    
-    def toggle_notification_button(e):
-        if e.control.selected:
-            page.update()
         else:
+            page.theme_mode = ft.ThemeMode.LIGHT
             page.update()
         e.control.selected = not e.control.selected
         e.control.update()
-    
-    def booked_tab(rooms):
-        items = []
-        for room in rooms:
-            items.append(
-                ft.Container(
-                    content=ft.Text(value=f"Room {room['number']}"),
-                    alignment=ft.alignment.center,
-                    width=350,
-                    height=350,
-                    bgcolor=ft.colors.SURFACE_VARIANT,
-                    border_radius=ft.border_radius.all(5),
-                )
-            )
-        return items
-
-    def available_tab(rooms):
-        items = []
-        for room in rooms:
-            items.append(
-                ft.Container(
-                    content=ft.Text(value=f"Room {room['number']}"),
-                    alignment=ft.alignment.center,
-                    width=350,
-                    height=350,
-                    bgcolor=ft.colors.SURFACE_VARIANT,
-                    border_radius=ft.border_radius.all(5),
-                )
-            )
-        return items
-
-    # Sample room details
-    booked_rooms = [
-        {"number": 101, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 102, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 103, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 104, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 105, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 106, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 107, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 108, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 109, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 110, "status": "Booked", "guest": "Jane Smith"},
-        {"number": 111, "status": "Booked", "guest": "Jane Smith"},
-    ]
-    available_rooms = [
-        {"number": 201, "status": "Available"},
-        {"number": 202, "status": "Available"},
-        {"number": 203, "status": "Available"},
-        {"number": 204, "status": "Available"},
-        {"number": 205, "status": "Available"},
-        {"number": 206, "status": "Available"},
-        {"number": 207, "status": "Available"},
-        {"number": 208, "status": "Available"},
-        {"number": 209, "status": "Available"},
-    ]
-
-    booked_tab_items = booked_tab(booked_rooms)
-    available_tab_items = available_tab(available_rooms)
 
     # route handler
     def route_change(route):
@@ -108,7 +40,7 @@ def main(page):
                                 selected_icon=ft.icons.NOTIFICATIONS_ACTIVE_ROUNDED,
                                 style=ft.ButtonStyle(padding=0),
                                 selected=False,
-                                on_click=toggle_notification_button,
+                                on_click=lambda _: page.go("/notifications"),
                                 adaptive=True,
                             )
                         ],
@@ -122,7 +54,7 @@ def main(page):
                             width=page.window_width,
                             alignment=ft.MainAxisAlignment.SPACE_AROUND,
                             controls=[
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar"), adaptive=True),
+                                ft.IconButton(icon=ft.icons.SEARCH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/search"), adaptive=True),
                                 ft.IconButton(icon=ft.icons.HOME, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/"), adaptive=True),
                                 ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
                             ],
@@ -135,7 +67,7 @@ def main(page):
                         expand=1,
                         tabs=[
                             ft.Tab(
-                                tab_content=ft.Icon(ft.icons.SEARCH),
+                                text="Active",
                                 content=ft.Container(
                                     margin=5,
                                     content=ft.Row(
@@ -145,8 +77,7 @@ def main(page):
                                 )
                             ),
                             ft.Tab(
-                                text="Booked",
-                                icon=ft.icons.MEETING_ROOM,
+                                text="Past",
                                 content=ft.Container(
                                     margin=5,
                                     content=ft.Row(
@@ -155,14 +86,13 @@ def main(page):
                                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                                         spacing=10,
                                         width=page.window_width,
-                                        controls=booked_tab_items,
+                                        #controls=active_home_tab,
                                         scroll=ft.ScrollMode.AUTO,
                                     )
                                 ),
                             ),
                             ft.Tab(
-                                text="Available",
-                                icon=ft.icons.EVENT_AVAILABLE,
+                                text="Cancelled",
                                 content=ft.Container(
                                     margin=5,
                                     content=ft.Row(
@@ -171,7 +101,7 @@ def main(page):
                                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                                         spacing=10,
                                         width=page.window_width,
-                                        controls=available_tab_items,
+                                        #controls=available_tab_items,
                                         scroll=ft.ScrollMode.AUTO,
                                     )
                                 ),
@@ -181,13 +111,13 @@ def main(page):
                 ],
             )
         )
-        if page.route == "/calendar":
+        if page.route == "/search":
             page.views.append(
                 ft.View(
                     # calendar page
-                    "/calendar",
+                    "/search",
                     [
-                        ft.AppBar(title=ft.Text("Calendar"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.AppBar(title=ft.Text("Search"), bgcolor=ft.colors.SURFACE_VARIANT),
                         ft.BottomAppBar(
                             bgcolor=ft.colors.SURFACE_VARIANT,
                             shape=ft.NotchShape.CIRCULAR,
@@ -196,7 +126,7 @@ def main(page):
                                 width=page.window_width,
                                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 controls=[
-                                    ft.IconButton(icon=ft.icons.CALENDAR_MONTH, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar"), adaptive=True),
+                                    ft.IconButton(icon=ft.icons.SEARCH, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/search"), adaptive=True),
                                     ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/"), adaptive=True),
                                     ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
                                 ],
@@ -205,6 +135,17 @@ def main(page):
                     ],
                 )
             )
+        if page.route == "/notifications":
+            page.views.append(
+                ft.View(
+                    # notifications page
+                    "/notifications",
+                    [
+                        ft.AppBar(title=ft.Text("Notifications"), bgcolor=ft.colors.SURFACE_VARIANT),
+                    ],
+                )
+            )
+
         if page.route == "/settings":
             page.views.append(
                 ft.View(
@@ -216,8 +157,8 @@ def main(page):
                             bgcolor=ft.colors.SURFACE_VARIANT,
                             actions=[
                                 ft.IconButton(
-                                    icon=ft.icons.LIGHT_MODE,
-                                    selected_icon=ft.icons.DARK_MODE,
+                                    icon=ft.icons.DARK_MODE,
+                                    selected_icon=ft.icons.LIGHT_MODE,
                                     style=ft.ButtonStyle(padding=0),
                                     selected=False,
                                     on_click=toggle_theme_button,
@@ -233,7 +174,7 @@ def main(page):
                                 width=page.window_width,
                                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 controls=[
-                                    ft.IconButton(icon=ft.icons.CALENDAR_MONTH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/calendar"), adaptive=True),
+                                    ft.IconButton(icon=ft.icons.SEARCH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/search"), adaptive=True),
                                     ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/"), adaptive=True),
                                     ft.IconButton(icon=ft.icons.SETTINGS, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
                                 ],

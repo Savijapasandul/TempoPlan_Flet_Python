@@ -5,7 +5,7 @@ import flet as ft
 def main(page):
 
     # page settings
-    page.title = "TempoRoomPlan"
+    page.title = "RoomReservePro"
     page.adaptive = True
     page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER

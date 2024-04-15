@@ -1,8 +1,18 @@
 # modules
 import flet as ft
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # main page
 def main(page):
+
+    # supabase
+    url: str = os.environ.get("SUPABASE_URL")
+    key: str = os.environ.get("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
 
     # page settings
     page.title = "RoomReservePro"
@@ -182,18 +192,65 @@ def main(page):
                 )
             )
 
-        if page.route == "/available_rooms":
+        if page.route == "/notifications":
             page.views.append(
                 ft.View(
-                    # available_rooms page
-                    "/available_rooms",
+                    # notifications page
+                    "/notifications",
                     controls=[
-                        ft.AppBar(title=ft.Text("Available rooms"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.AppBar(title=ft.Text("Notifications"), bgcolor=ft.colors.SURFACE_VARIANT),
+
                         ft.Container(
                             content=ft.Column(
                                 alignment=ft.MainAxisAlignment.CENTER,
                                 controls=[
-                                    ft.Text("No rooms available to book."),
+                                    ft.Text("You don't have any notifications"),
+                                    ft.Text("Notifications let you quickly take actions on upcoming or current bookings.") 
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
+
+        if page.route == "/login":
+            page.views.append(
+                ft.View(
+                    # login page
+                    "/login",
+                    controls=[
+                        ft.AppBar(title=ft.Text("Login"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.TextField(hint_text="Username",),
+                                    ft.TextField(hint_text="Password",),
+                                    ft.TextButton("Login"),
+                                    ft.Text("No account then create a new account"),
+                                    ft.TextButton("Create account", on_click=lambda _: page.go("/create_account"))
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
+
+        if page.route == "/create_account":
+            page.views.append(
+                ft.View(
+                    # create_account page
+                    "/create_account",
+                    controls=[
+                        ft.AppBar(title=ft.Text("Create Account"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.TextField(hint_text="Email address",),
+                                    ft.TextField(hint_text="Username",),
+                                    ft.TextField(hint_text="Password",),
+                                    ft.TextButton("Create account",)
                                 ]
                             )
                         ),
@@ -202,6 +259,7 @@ def main(page):
             )
 
         if page.route == "/settings":
+            is_light_mode = page.theme_mode == ft.ThemeMode.LIGHT
             page.views.append(
                 ft.View(
                     # setting page
@@ -215,7 +273,7 @@ def main(page):
                                     icon=ft.icons.DARK_MODE,
                                     selected_icon=ft.icons.LIGHT_MODE,
                                     style=ft.ButtonStyle(padding=0),
-                                    selected=False,
+                                    selected=is_light_mode,
                                     on_click=toggle_theme_button,
                                     adaptive=True,
                                 ),
@@ -242,8 +300,7 @@ def main(page):
                                 scroll=ft.ScrollMode.AUTO,
                                 controls=[
                                     ft.Text("Not logged in!"),
-                                    ft.TextButton("Log in"),
-                                    ft.TextButton("Log out"),
+                                    ft.TextButton("Log in", on_click=lambda _: page.go("/login")),
                                     ft.ListTile(
                                         leading=ft.Icon(ft.icons.SETTINGS),
                                         trailing=ft.PopupMenuButton(
@@ -253,14 +310,6 @@ def main(page):
                                                 ft.PopupMenuItem(text="Item 2"),
                                             ]
                                         ),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
                                         title=ft.Text("No implemented setting yet")
                                     ),
                                     ft.ListTile(

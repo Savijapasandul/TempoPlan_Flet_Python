@@ -21,6 +21,16 @@ def main(page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.CrossAxisAlignment.CENTER
     
+    # Search handler for available rooms
+    def fetch_available_rooms():
+        # Query the database to fetch available rooms
+        response = supabase.table("rooms").select("*").eq("available_for_booking", True).execute()
+        # Check if the response is successful
+        available_rooms = response.data
+        return available_rooms
+        page.update()
+        
+        
     # light theme / dark theme
     def toggle_theme_button(e):
         if e.control.selected:
@@ -140,9 +150,23 @@ def main(page):
             )
         )
         if page.route == "/search":
+            # Fetch available rooms from Supabase
+            rooms = fetch_available_rooms()
+            print("Fetched rooms:", rooms)
+
+            # Create controls to display available rooms on the search page
+            room_controls = []
+            for room in rooms:
+                room_controls.append(
+                    ft.ListTile(
+                        title=ft.Text(room['name']),
+                        subtitle=ft.Text(room['description']),
+                    )
+                )
+
             page.views.append(
                 ft.View(
-                    # calendar page
+                    # search page
                     "/search",
                     controls=[
                         ft.AppBar(title=ft.Text("Search"), bgcolor=ft.colors.SURFACE_VARIANT),
@@ -154,23 +178,74 @@ def main(page):
                                 width=page.window_width,
                                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 controls=[
-                                    ft.IconButton(icon=ft.icons.SEARCH, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/search"), adaptive=True),
-                                    ft.IconButton(icon=ft.icons.HOME, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/"), adaptive=True),
-                                    ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
-                                ],
+                                ft.IconButton(icon=ft.icons.SEARCH, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/search"), adaptive=True),
+                                ft.IconButton(icon=ft.icons.HOME, selected=True, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/"), adaptive=True),
+                                ft.IconButton(icon=ft.icons.SETTINGS, style=ft.ButtonStyle(padding=0), on_click=lambda _: page.go("/settings"), adaptive=True),
+                            ],
                             )
                         ),
 
-                        ft.TextField(
-                            hint_text="Search...",  
+                        ft.Row(
+                            width=page.window_width,
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            controls=[
+                                ft.IconButton(
+                                    icon=ft.icons.SEARCH,
+                                ),
+                                ft.TextField(
+                                    hint_text="Search...",
+                                ),
+                            ]
                         ),
-
-                        ft.TextButton("Search"),
-
+                        ft.Column(
+                            scroll=ft.ScrollMode.AUTO,
+                            width=page.window_width,
+                            controls=room_controls,
+                        ),
                     ],
                 )
             )
 
+        if page.route == "/room_booking":
+            page.views.append(
+                ft.View(
+                    # notifications page
+                    "/room_booking",
+                    controls=[
+                        ft.AppBar(title=ft.Text("Room Booking"), bgcolor=ft.colors.SURFACE_VARIANT),
+
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text("Room Booking"),
+                                    
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
+        if page.route == "/room_details":
+            page.views.append(
+                ft.View(
+                    # notifications page
+                    "/room_details",
+                    controls=[
+                        ft.AppBar(title=ft.Text("Room Details"), bgcolor=ft.colors.SURFACE_VARIANT),
+
+                        ft.Container(
+                            content=ft.Column(
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text("Room Details"),
+                                    
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
         if page.route == "/notifications":
             page.views.append(
                 ft.View(

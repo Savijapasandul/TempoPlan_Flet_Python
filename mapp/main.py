@@ -24,12 +24,14 @@ def main(page):
     # Search handler for available rooms
     def fetch_available_rooms():
         # Query the database to fetch available rooms
-        response = supabase.table("rooms").select("*").eq("available_for_booking", True).execute()
+        response = supabase.table("available_rooms").select("*").eq("available_for_booking", True).execute()
         # Check if the response is successful
         available_rooms = response.data
         return available_rooms
         page.update()
-        
+
+    def book_room():
+        pass      
         
     # light theme / dark theme
     def toggle_theme_button(e):

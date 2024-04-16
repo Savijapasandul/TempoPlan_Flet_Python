@@ -162,32 +162,11 @@ def main(page):
                         ),
 
                         ft.TextField(
-                            hint_text="Search...", 
-                            on_submit=lambda _: page.go("/available_rooms"), 
+                            hint_text="Search...",  
                         ),
 
-                        ft.TextButton("Search", on_click=lambda _: page.go("/available_rooms")),
+                        ft.TextButton("Search"),
 
-                    ],
-                )
-            )
-        if page.route == "/notifications":
-            page.views.append(
-                ft.View(
-                    # notifications page
-                    "/notifications",
-                    controls=[
-                        ft.AppBar(title=ft.Text("Notifications"), bgcolor=ft.colors.SURFACE_VARIANT),
-
-                        ft.Container(
-                            content=ft.Column(
-                                alignment=ft.MainAxisAlignment.CENTER,
-                                controls=[
-                                    ft.Text("You don't have any notifications"),
-                                    ft.Text("Notifications let you quickly take actions on upcoming or current bookings.") 
-                                ]
-                            )
-                        ),
                     ],
                 )
             )

@@ -35,6 +35,9 @@ def main(page):
         account_details = response.data
         return account_details
         page.update()
+
+    def on_logout_click(e=None):
+        page.go("/login")
                 
     def on_create_account_click(email_input, password_input, username_input):
         email = email_input.value
@@ -42,12 +45,16 @@ def main(page):
         username = username_input.value
         handler_create_account(email, password, username)
         page.go("/login")
+        page.update()
     
     def on_login_click(username_input, password_input):
         username = username_input.value
         password = password_input.value
-        login(username, password)
-        page.go("/settings")
+        if login(username, password):
+            page.go("/settings")
+        else:
+            page.go("/login")
+        page.update()
     
     def handler_create_account(email, password, username):
         data = supabase.table('users').insert({"email": email, "password": password, "username": username}).execute()
@@ -59,11 +66,6 @@ def main(page):
             if account["username"] == username and account["password"] == password:
                 return True
         return False
-
-    def filter_rooms(keyword):
-        rooms = fetch_available_rooms()
-        filtered_rooms = [room for room in rooms if keyword.lower() in room['name'].lower() or keyword.lower() in room['description'].lower()]
-        return filtered_rooms
         
     # light theme / dark theme
     def toggle_theme_button(e):
@@ -134,14 +136,10 @@ def main(page):
                                 content=ft.Container(
                                     margin=10,
                                     content=ft.Column(
-                                        wrap=True,
                                         expand=True,
                                         width=page.window_width,
                                         alignment=ft.MainAxisAlignment.CENTER,
                                         controls=[
-                                            ft.Text("No bookings yet"),
-                                            ft.Text("Sign in or create an account to get started."),
-                                            ft.TextButton(text="Log in"),
                                         ]
                                     )  
                                 )
@@ -151,16 +149,12 @@ def main(page):
                                 content=ft.Container(
                                     margin=10,
                                     content=ft.Column(
-                                        wrap=True,
                                         expand=True,
                                         alignment=ft.MainAxisAlignment.CENTER,
                                         spacing=10,
                                         width=page.window_width,
                                         scroll=ft.ScrollMode.AUTO,
                                         controls=[
-                                            ft.Text("No pass bookings"),
-                                            ft.Text("Sign in or create an account to get started."),
-                                            ft.TextButton(text="Log in"),
                                         ]
                                     )
                                 ),
@@ -170,16 +164,12 @@ def main(page):
                                 content=ft.Container(
                                     margin=10,
                                     content=ft.Column(
-                                        wrap=True,
                                         expand=True,
                                         alignment=ft.MainAxisAlignment.CENTER,
                                         spacing=10,
                                         width=page.window_width,
                                         scroll=ft.ScrollMode.AUTO,
                                         controls=[
-                                            ft.Text("No cancelled bookings"),
-                                            ft.Text("Sign in or create an account to get started."),
-                                            ft.TextButton(text="Log in"),
                                         ]
                                     )
                                 ),
@@ -360,6 +350,15 @@ def main(page):
 
         if page.route == "/settings":
             is_light_mode = page.theme_mode == ft.ThemeMode.LIGHT
+
+
+            is_logged_in = False
+            username = ""
+            account_details = fetch_account_details()
+            if account_details:
+                is_logged_in = True
+                username = account_details[0]["username"]
+            
             page.views.append(
                 ft.View(
                     # setting page
@@ -395,12 +394,14 @@ def main(page):
                         ),
 
                         ft.Container(
+                            margin=10,
                             content=ft.Column(
                                 width=500,
                                 scroll=ft.ScrollMode.AUTO,
                                 controls=[
-                                    ft.Text("Not logged in!"),
-                                    ft.TextButton("Log in", on_click=lambda _: page.go("/login")),
+                                    ft.Text(f"Welcome, {username}!" if is_logged_in else "Not logged in!", theme_style=ft.TextThemeStyle.HEADLINE_LARGE),
+                                    ft.TextButton("Log in", on_click=lambda _: page.go("/login")) if not is_logged_in else ft.TextButton("Log out", on_click=on_logout_click),
+                                    ft.Divider(),
                                     ft.ListTile(
                                         leading=ft.Icon(ft.icons.SETTINGS),
                                         trailing=ft.PopupMenuButton(

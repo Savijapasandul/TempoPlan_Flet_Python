@@ -30,6 +30,36 @@ def main(page):
         return available_rooms
         page.update()
     
+    def fetch_account_details():
+        response = supabase.table("users").select("*").execute()
+        account_details = response.data
+        return account_details
+        page.update()
+                
+    def on_create_account_click(email_input, password_input, username_input):
+        email = email_input.value
+        password = password_input.value
+        username = username_input.value
+        handler_create_account(email, password, username)
+        page.go("/login")
+    
+    def on_login_click(username_input, password_input):
+        username = username_input.value
+        password = password_input.value
+        login(username, password)
+        page.go("/settings")
+    
+    def handler_create_account(email, password, username):
+        data = supabase.table('users').insert({"email": email, "password": password, "username": username}).execute()
+        return True
+    
+    def login(username, password):
+        account_details = fetch_account_details()
+        for account in account_details:
+            if account["username"] == username and account["password"] == password:
+                return True
+        return False
+
     def filter_rooms(keyword):
         rooms = fetch_available_rooms()
         filtered_rooms = [room for room in rooms if keyword.lower() in room['name'].lower() or keyword.lower() in room['description'].lower()]
@@ -275,6 +305,8 @@ def main(page):
             )
 
         if page.route == "/login":
+            login_username = ft.TextField(label="Username")
+            login_password = ft.TextField(label="Password", password=True, can_reveal_password=True)
             page.views.append(
                 ft.View(
                     # login page
@@ -282,14 +314,15 @@ def main(page):
                     controls=[
                         ft.AppBar(title=ft.Text("Login"), bgcolor=ft.colors.SURFACE_VARIANT),
                         ft.Container(
+                            margin=10,
                             content=ft.Column(
                                 alignment=ft.MainAxisAlignment.CENTER,
                                 controls=[
-                                    ft.TextField(hint_text="Username",),
-                                    ft.TextField(hint_text="Password",),
-                                    ft.TextButton("Login"),
-                                    ft.Text("No account then create a new account"),
-                                    ft.TextButton("Create account", on_click=lambda _: page.go("/create_account"))
+                                    ft.Text("Login with your account details"),
+                                    login_username,    
+                                    login_password,
+                                    ft.TextButton("Login", on_click=lambda _: on_login_click(login_username, login_password)),
+                                    ft.Text("Don't have an account? ", spans=[ft.TextSpan("Sign Up", ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, color=ft.colors.BLUE), on_click=lambda _: page.go("/create_account"))])
                                 ]
                             )
                         ),
@@ -298,6 +331,9 @@ def main(page):
             )
 
         if page.route == "/create_account":
+            email_input = ft.TextField(label="Email address")
+            username_input = ft.TextField(label="Username")
+            password_input = ft.TextField(label="Password", password=True, can_reveal_password=True)
             page.views.append(
                 ft.View(
                     # create_account page
@@ -305,13 +341,16 @@ def main(page):
                     controls=[
                         ft.AppBar(title=ft.Text("Create Account"), bgcolor=ft.colors.SURFACE_VARIANT),
                         ft.Container(
+                            margin=10,
                             content=ft.Column(
                                 alignment=ft.MainAxisAlignment.CENTER,
                                 controls=[
-                                    ft.TextField(hint_text="Email address",),
-                                    ft.TextField(hint_text="Username",),
-                                    ft.TextField(hint_text="Password",),
-                                    ft.TextButton("Create account",)
+                                    ft.Text("Sign up of an account"),
+                                    email_input,
+                                    username_input,
+                                    password_input,
+                                    ft.TextButton("Create account", on_click=lambda _: on_create_account_click(email_input, password_input, username_input)),
+                                    ft.Text("Already have an account? ", spans=[ft.TextSpan("Log In", ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, color=ft.colors.BLUE), on_click=lambda _: page.go("/login"))])
                                 ]
                             )
                         ),

@@ -29,9 +29,11 @@ def main(page):
         available_rooms = response.data
         return available_rooms
         page.update()
-
-    def book_room():
-        pass      
+    
+    def filter_rooms(keyword):
+        rooms = fetch_available_rooms()
+        filtered_rooms = [room for room in rooms if keyword.lower() in room['name'].lower() or keyword.lower() in room['description'].lower()]
+        return filtered_rooms
         
     # light theme / dark theme
     def toggle_theme_button(e):
@@ -44,8 +46,14 @@ def main(page):
         e.control.selected = not e.control.selected
         e.control.update()
 
-    def handle_search_change(e):
-        print("on_change data : " + str(e.data))
+    def handle_expansion_tile_change(e):
+        if e.control.trailing:
+            e.control.trailing.name = (
+                ft.icons.ARROW_DROP_DOWN
+                if e.control.trailing.name == ft.icons.ARROW_DROP_DOWN_CIRCLE
+                else ft.icons.ARROW_DROP_DOWN_CIRCLE
+            )
+            page.update()
 
     # route handler
     def route_change(route):
@@ -154,17 +162,24 @@ def main(page):
         if page.route == "/search":
             # Fetch available rooms from Supabase
             rooms = fetch_available_rooms()
-            print("Fetched rooms:", rooms)
-
-            # Create controls to display available rooms on the search page
             room_controls = []
             for room in rooms:
+                room_id = room['id']
                 room_controls.append(
-                    ft.ListTile(
+                    ft.ExpansionTile(
                         title=ft.Text(room['name']),
                         subtitle=ft.Text(room['description']),
+                        trailing=ft.Icon(ft.icons.ARROW_DROP_DOWN),
+                        on_change=handle_expansion_tile_change,
+                        controls=[
+                            ft.ListTile(title=ft.TextField(label="Starting Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ")),
+                            ft.ListTile(title=ft.TextField(label="Ending Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ")),
+                            ft.ListTile(title=ft.TextField(label="Username", border="none", hint_text="Enter Username here")),
+                            ft.ListTile(title=ft.ElevatedButton("Book")),
+                        ],
                     )
-                )
+                ),
+                
 
             page.views.append(
                 ft.View(
@@ -186,65 +201,56 @@ def main(page):
                             ],
                             )
                         ),
-
-                        ft.Row(
-                            width=page.window_width,
-                            alignment=ft.MainAxisAlignment.CENTER,
-                            controls=[
-                                ft.IconButton(
+                        ft.Tabs(
+                            selected_index=0,
+                            animation_duration=300,
+                            expand=1,
+                            tabs=[
+                                ft.Tab(
                                     icon=ft.icons.SEARCH,
+                                    content=ft.Container(                                    
+                                        margin=10,
+                                        content=ft.Column(
+                                            expand=True,
+                                            alignment=ft.MainAxisAlignment.CENTER,
+                                            spacing=10,
+                                            width=page.window_width,
+                                            scroll=ft.ScrollMode.AUTO,
+                                            controls=[
+                                                ft.Container(
+                                                    content=ft.Column(
+                                                        [
+                                                            ft.TextField(label="Search",border="none",hint_text="Enter text here"),
+                                                            ft.ProgressBar(width=page.window_width,color="blue")
+                                                        ]
+                                                    ),
+                                                ),
+                                                ft.Divider(),
+                                                ft.Container(
+                                                    content=ft.Column(
+                                                        controls=room_controls,
+                                                    ),
+                                                )
+                                            ]
+                                        )
+                                    ),
                                 ),
-                                ft.TextField(
-                                    hint_text="Search...",
+                                ft.Tab(
+                                    text="All rooms",
+                                    content=ft.Container(
+                                        margin=10,
+                                        content=ft.Column(
+                                            expand=True,
+                                            alignment=ft.MainAxisAlignment.CENTER,
+                                            spacing=10,
+                                            width=page.window_width,
+                                            scroll=ft.ScrollMode.AUTO,
+                                            controls=room_controls,
+                                        )
+                                    ),
                                 ),
-                            ]
-                        ),
-                        ft.Column(
-                            scroll=ft.ScrollMode.AUTO,
-                            width=page.window_width,
-                            controls=room_controls,
-                        ),
-                    ],
-                )
-            )
-
-        if page.route == "/room_booking":
-            page.views.append(
-                ft.View(
-                    # notifications page
-                    "/room_booking",
-                    controls=[
-                        ft.AppBar(title=ft.Text("Room Booking"), bgcolor=ft.colors.SURFACE_VARIANT),
-
-                        ft.Container(
-                            content=ft.Column(
-                                alignment=ft.MainAxisAlignment.CENTER,
-                                controls=[
-                                    ft.Text("Room Booking"),
-                                    
-                                ]
-                            )
-                        ),
-                    ],
-                )
-            )
-        if page.route == "/room_details":
-            page.views.append(
-                ft.View(
-                    # notifications page
-                    "/room_details",
-                    controls=[
-                        ft.AppBar(title=ft.Text("Room Details"), bgcolor=ft.colors.SURFACE_VARIANT),
-
-                        ft.Container(
-                            content=ft.Column(
-                                alignment=ft.MainAxisAlignment.CENTER,
-                                controls=[
-                                    ft.Text("Room Details"),
-                                    
-                                ]
-                            )
-                        ),
+                            ],
+                        )
                     ],
                 )
             )
@@ -366,18 +372,6 @@ def main(page):
                                                 ft.PopupMenuItem(text="Item 2"),
                                             ]
                                         ),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
                                         title=ft.Text("No implemented setting yet")
                                     ),
                                 ]

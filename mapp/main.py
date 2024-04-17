@@ -180,7 +180,6 @@ def main(page):
                     )
                 ),
                 
-
             page.views.append(
                 ft.View(
                     # search page
@@ -220,7 +219,7 @@ def main(page):
                                                 ft.Container(
                                                     content=ft.Column(
                                                         [
-                                                            ft.TextField(label="Search",border="none",hint_text="Enter text here"),
+                                                            ft.TextField(label="Search",border="none",hint_text="Enter text here",),
                                                             ft.ProgressBar(width=page.window_width,color="blue")
                                                         ]
                                                     ),
@@ -236,7 +235,7 @@ def main(page):
                                     ),
                                 ),
                                 ft.Tab(
-                                    text="All rooms",
+                                    text="All available rooms",
                                     content=ft.Container(
                                         margin=10,
                                         content=ft.Column(

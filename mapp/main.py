@@ -35,6 +35,38 @@ def main(page):
         account_details = response.data
         return account_details
         page.update()
+    
+    def on_create_active_booking_click(starting_time, ending_time, username):
+        starting_time = starting_time.value
+        ending_time = ending_time.value
+        username = username.value
+        new_booking = {
+        "starting_time": starting_time,
+        "ending_time": ending_time,
+        "username": username,
+        "status": "Active",
+        }
+        data = supabase.table('booked_rooms').insert(new_booking).execute()
+        page.go("/")
+        page.update()
+    
+    def fetch_active_booking():
+        response = supabase.table("booked_rooms").select("*").eq("status", "Active").execute()
+        active_booking_details = response.data
+        return active_booking_details
+        page.update()
+    
+    def fetch_past_booking():
+        response = supabase.table("booked_rooms").select("*").eq("status", "Past").execute()
+        past_booking_details = response.data
+        return past_booking_details
+        page.update()
+    
+    def fetch_cancelled_booking():
+        response = supabase.table("booked_rooms").select("*").eq("status", "Cancelled").execute()
+        cancelled_booking_details = response.data
+        return cancelled_booking_details
+        page.update()
 
     def on_logout_click(e=None):
         page.go("/login")
@@ -46,6 +78,9 @@ def main(page):
         handler_create_account(email, password, username)
         page.go("/login")
         page.update()
+    
+    def on_create_active_booking_click():
+        pass
     
     def on_login_click(username_input, password_input):
         username = username_input.value
@@ -89,7 +124,67 @@ def main(page):
 
     # route handler
     def route_change(route):
-    
+
+        active_booking = fetch_active_booking()
+        active_controls = []
+        for active in active_booking:
+            active_booking_id = active['id']
+            active_controls.append(
+                ft.ExpansionTile(
+                    title=ft.Text(active['name']),
+                    subtitle=ft.Text(active['description']),
+                    trailing=ft.Icon(ft.icons.ARROW_DROP_DOWN),
+                    on_change=handle_expansion_tile_change,
+                    controls=[
+                        ft.ListTile(title=ft.Text("Starting Time: " + active['starting_time'])),
+                        ft.ListTile(title=ft.Text("Ending Time: " + active['ending_time'])),
+                        ft.ListTile(title=ft.Text("Room Capacity: " + active['room_capacity'])),
+                        ft.ListTile(title=ft.Text("Booking Status: " + active['status'])),
+                        ft.ListTile(title=ft.TextButton("Cancel Booking")),
+                    ]
+                )
+            )
+        
+        past_booking = fetch_past_booking()
+        past_controls = []
+        for past in past_booking:
+            past_booking_id = past['id']
+            past_controls.append(
+                ft.ExpansionTile(
+                    title=ft.Text(past['name']),
+                    subtitle=ft.Text(past['description']),
+                    trailing=ft.Icon(ft.icons.ARROW_DROP_DOWN),
+                    on_change=handle_expansion_tile_change,
+                    controls=[
+                        ft.ListTile(title=ft.Text("Starting Time: " + past['starting_time'])),
+                        ft.ListTile(title=ft.Text("Ending Time: " + past['ending_time'])),
+                        ft.ListTile(title=ft.Text("Room Capacity: " + past['room_capacity'])),
+                        ft.ListTile(title=ft.Text("Booking Status: " + past['status'])),
+                        ft.ListTile(title=ft.TextButton("Book Again")),
+                    ]
+                )
+            )
+        
+        cancelled_booking = fetch_cancelled_booking()
+        cancelled_controls = []
+        for cancelled in cancelled_booking:
+            cancelled_booking_id = cancelled['id']
+            cancelled_controls.append(
+                ft.ExpansionTile(
+                    title=ft.Text(cancelled['name']),
+                    subtitle=ft.Text(cancelled['description']),
+                    trailing=ft.Icon(ft.icons.ARROW_DROP_DOWN),
+                    on_change=handle_expansion_tile_change,
+                    controls=[
+                        ft.ListTile(title=ft.Text("Starting Time: " + cancelled['starting_time'])),
+                        ft.ListTile(title=ft.Text("Ending Time: " + cancelled['ending_time'])),
+                        ft.ListTile(title=ft.Text("Room Capacity: " + cancelled['room_capacity'])),
+                        ft.ListTile(title=ft.Text("Booking Status: " + cancelled['status'])),
+                        ft.ListTile(title=ft.TextButton("Book Again")),
+                    ]
+                )
+            )
+
         page.views.clear()    
         page.views.append(
             ft.View(
@@ -138,8 +233,15 @@ def main(page):
                                     content=ft.Column(
                                         expand=True,
                                         width=page.window_width,
+                                        scroll=ft.ScrollMode.AUTO,
+                                        spacing=10,
                                         alignment=ft.MainAxisAlignment.CENTER,
                                         controls=[
+                                            ft.Container(
+                                                content=ft.Column(
+                                                    controls=active_controls,
+                                                ),
+                                            )
                                         ]
                                     )  
                                 )
@@ -150,11 +252,16 @@ def main(page):
                                     margin=10,
                                     content=ft.Column(
                                         expand=True,
-                                        alignment=ft.MainAxisAlignment.CENTER,
-                                        spacing=10,
                                         width=page.window_width,
                                         scroll=ft.ScrollMode.AUTO,
+                                        spacing=10,
+                                        alignment=ft.MainAxisAlignment.CENTER,
                                         controls=[
+                                            ft.Container(
+                                                content=ft.Column(
+                                                    controls=past_controls,
+                                                ),
+                                            )
                                         ]
                                     )
                                 ),
@@ -165,11 +272,16 @@ def main(page):
                                     margin=10,
                                     content=ft.Column(
                                         expand=True,
-                                        alignment=ft.MainAxisAlignment.CENTER,
-                                        spacing=10,
                                         width=page.window_width,
                                         scroll=ft.ScrollMode.AUTO,
+                                        spacing=10,
+                                        alignment=ft.MainAxisAlignment.CENTER,
                                         controls=[
+                                            ft.Container(
+                                                content=ft.Column(
+                                                    controls=cancelled_controls,
+                                                ),
+                                            )
                                         ]
                                     )
                                 ),
@@ -181,6 +293,11 @@ def main(page):
         )
         if page.route == "/search":
             # Fetch available rooms from Supabase
+            
+            starting_time = ft.ListTile(title=ft.TextField(label="Starting Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ"))
+            ending_time = ft.ListTile(title=ft.TextField(label="Ending Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ"))
+            username = ft.ListTile(title=ft.TextField(label="Username", border="none", hint_text="Enter Username here"))
+
             rooms = fetch_available_rooms()
             room_controls = []
             for room in rooms:
@@ -192,10 +309,11 @@ def main(page):
                         trailing=ft.Icon(ft.icons.ARROW_DROP_DOWN),
                         on_change=handle_expansion_tile_change,
                         controls=[
-                            ft.ListTile(title=ft.TextField(label="Starting Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ")),
-                            ft.ListTile(title=ft.TextField(label="Ending Time", border="none", hint_text="YYYY-MM-DD HH:MM:SS+TZ")),
-                            ft.ListTile(title=ft.TextField(label="Username", border="none", hint_text="Enter Username here")),
-                            ft.ListTile(title=ft.ElevatedButton("Book")),
+                            ft.ListTile(title=ft.Text("Room Capacity: " + room['room_capacity'])),
+                            starting_time, 
+                            ending_time, 
+                            username,
+                            ft.ListTile(title=ft.ElevatedButton("Book", on_click=lambda _: on_create_active_booking_click(starting_time, ending_time, username))),
                         ],
                     )
                 ),
@@ -227,6 +345,7 @@ def main(page):
                             tabs=[
                                 ft.Tab(
                                     icon=ft.icons.SEARCH,
+                                    text="Available rooms",
                                     content=ft.Container(                                    
                                         margin=10,
                                         content=ft.Column(
@@ -251,20 +370,6 @@ def main(page):
                                                     ),
                                                 )
                                             ]
-                                        )
-                                    ),
-                                ),
-                                ft.Tab(
-                                    text="All available rooms",
-                                    content=ft.Container(
-                                        margin=10,
-                                        content=ft.Column(
-                                            expand=True,
-                                            alignment=ft.MainAxisAlignment.CENTER,
-                                            spacing=10,
-                                            width=page.window_width,
-                                            scroll=ft.ScrollMode.AUTO,
-                                            controls=room_controls,
                                         )
                                     ),
                                 ),
@@ -402,17 +507,17 @@ def main(page):
                                     ft.Text(f"Welcome, {username}!" if is_logged_in else "Not logged in!", theme_style=ft.TextThemeStyle.HEADLINE_LARGE),
                                     ft.TextButton("Log in", on_click=lambda _: page.go("/login")) if not is_logged_in else ft.TextButton("Log out", on_click=on_logout_click),
                                     ft.Divider(),
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.SETTINGS),
-                                        trailing=ft.PopupMenuButton(
-                                            icon=ft.icons.MORE_VERT,
-                                            items=[
-                                                ft.PopupMenuItem(text="Item 1"),
-                                                ft.PopupMenuItem(text="Item 2"),
-                                            ]
-                                        ),
-                                        title=ft.Text("No implemented setting yet")
-                                    ),
+                                    #ft.ListTile(
+                                    #   leading=ft.Icon(ft.icons.SETTINGS),
+                                    #   trailing=ft.PopupMenuButton(
+                                    #       icon=ft.icons.MORE_VERT,
+                                    #       items=[
+                                    #           ft.PopupMenuItem(text="Item 1"),
+                                    #           ft.PopupMenuItem(text="Item 2"),
+                                    #       ]
+                                    #   ),
+                                    #   title=ft.Text("No implemented setting yet")
+                                    #),
                                 ]
                             ),
                         ),

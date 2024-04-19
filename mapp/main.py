@@ -505,19 +505,32 @@ def main(page):
                                 scroll=ft.ScrollMode.AUTO,
                                 controls=[
                                     ft.Text(f"Welcome, {username}!" if is_logged_in else "Not logged in!", theme_style=ft.TextThemeStyle.HEADLINE_LARGE),
-                                    ft.TextButton("Log in", on_click=lambda _: page.go("/login")) if not is_logged_in else ft.TextButton("Log out", on_click=on_logout_click),
+                                    ft.Row([
+                                        ft.TextButton("Log in", on_click=lambda _: page.go("/login")),
+                                        ft.TextButton("Log out", on_click=lambda _: page.go("/login")),
+                                        ]
+                                    ),
                                     ft.Divider(),
-                                    #ft.ListTile(
-                                    #   leading=ft.Icon(ft.icons.SETTINGS),
-                                    #   trailing=ft.PopupMenuButton(
-                                    #       icon=ft.icons.MORE_VERT,
-                                    #       items=[
-                                    #           ft.PopupMenuItem(text="Item 1"),
-                                    #           ft.PopupMenuItem(text="Item 2"),
-                                    #       ]
-                                    #   ),
-                                    #   title=ft.Text("No implemented setting yet")
-                                    #),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.MANAGE_ACCOUNTS_OUTLINED),
+                                        title=ft.Text("Account settings")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.NOTIFICATIONS),
+                                        title=ft.Text("Nofications")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.LOCATION_DISABLED),
+                                        title=ft.Text("Locations")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.LANGUAGE),
+                                        title=ft.Text("Language")
+                                    ),
+                                    ft.ListTile(
+                                        leading=ft.Icon(ft.icons.FEEDBACK),
+                                        title=ft.Text("Feedback")
+                                    ),
                                 ]
                             ),
                         ),

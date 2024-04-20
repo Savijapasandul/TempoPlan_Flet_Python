@@ -15,7 +15,7 @@ def main(page):
     supabase: Client = create_client(url, key)
 
     # page settings
-    page.title = "RoomReservePro"
+    page.title = "TempoPlan"
     page.adaptive = True
     page.theme_mode = ft.ThemeMode.DARK
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER

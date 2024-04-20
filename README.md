@@ -1,9 +1,9 @@
 # TempoPlan_Flet_Python
  
-### RoomReservePro
+### TempoPlan
 
 #### Description:
-RoomReservePro is a Python application designed to manage room reservations. It utilizes Supabase as the backend for storing and retrieving data. The application provides various functionalities for users:
+TempoPlan is a Python application designed to manage room reservations. It utilizes Supabase as the backend for storing and retrieving data. The application provides various functionalities for users:
 
 #### Features:
 - **User Authentication:**
@@ -62,7 +62,9 @@ RoomReservePro is a Python application designed to manage room reservations. It 
 1. Ensure you have Python installed.
 2. Install the required libraries:
    ```
-   pip install flet supabase-python python-dotenv
+   pip install flet 
+   pip install supabase 
+   
    ```
 3. Set up Supabase:
    - Create a Supabase project and obtain the URL and API key.
@@ -80,5 +82,3 @@ RoomReservePro is a Python application designed to manage room reservations. It 
 #### Note:
 - This application requires a Supabase account and project for full functionality.
 - Make sure to set up your Supabase environment variables correctly for the app to connect to the backend.
-
-Feel free to reach out if you have any questions or need further assistance with RoomReservePro! 🏨✨
